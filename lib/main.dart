@@ -33,10 +33,14 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        scaffoldBackgroundColor: Color(0xFF1A1A2E),
+        primarySwatch: Colors.blueGrey,
+        scaffoldBackgroundColor: const Color(0xFFE9E3DF),
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme.apply(bodyColor: Colors.white),
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFB8C9D8),
+          brightness: Brightness.light,
         ),
       ),
       home: AgeCalculatorPage(),
@@ -208,16 +212,16 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
     return Container(
       key: _carteKey,
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.deepPurple.withOpacity(0.55),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.orangeAccent.withOpacity(0.4)),
+        color: const Color(0xFFF3E8DF).withOpacity(0.9),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFB98651), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black45,
-            blurRadius: 15,
-            offset: Offset(0, 6),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 26,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -231,28 +235,48 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.orangeAccent,
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF2F2420),
+                letterSpacing: 0.3,
+                shadows: [
+                  Shadow(
+                    color: Colors.white.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 18),
           Text(
             _comparaison,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(
+              fontSize: 16,
+              color: const Color(0xFF2D2A2A),
+              height: 1.5,
+            ),
           ),
           SizedBox(height: 8),
           Text(
             _joursVecus,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(
+              fontSize: 16,
+              color: const Color(0xFF2D2A2A),
+              height: 1.5,
+            ),
           ),
           SizedBox(height: 8),
           Text(
             _prochainAnniversaire,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(
+              fontSize: 16,
+              color: const Color(0xFF2D2A2A),
+              height: 1.5,
+            ),
           ),
         ],
       ),
@@ -268,12 +292,16 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
             image: AssetImage('assets/cosmic_clock.png'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.35),
+              Colors.black.withOpacity(0.12),
               BlendMode.darken,
             ),
           ),
           gradient: LinearGradient(
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
+            colors: [
+              const Color(0xFFEFE3DF),
+              const Color(0xFFCAD7E4),
+              const Color(0xFFE6D5C8),
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -315,12 +343,13 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                     icon: Icon(Icons.calendar_today),
                     label: Text('Choisir la date'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      foregroundColor: Colors.black,
+                      backgroundColor: const Color(0xE6C98B5B),
+                      foregroundColor: const Color(0xFF2B1F1B),
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
+                      elevation: 0,
                     ),
                   ),
                   SizedBox(height: 16),
@@ -340,8 +369,9 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                           icon: Icon(Icons.copy),
                           label: Text('Copier'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.greenAccent,
-                            foregroundColor: Colors.black,
+                            backgroundColor: const Color(0xFFB9CBB7),
+                            foregroundColor: const Color(0xFF24312C),
+                            elevation: 0,
                           ),
                         ),
                         ElevatedButton.icon(
@@ -349,8 +379,9 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                           icon: Icon(Icons.share),
                           label: Text('Texte'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            foregroundColor: Colors.black,
+                            backgroundColor: const Color(0xFFB7C9D7),
+                            foregroundColor: const Color(0xFF1D2C36),
+                            elevation: 0,
                           ),
                         ),
                         ElevatedButton.icon(
@@ -358,8 +389,8 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                           icon: Icon(Icons.image),
                           label: Text('Image'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pinkAccent,
-                            foregroundColor: Colors.black,
+                            backgroundColor: const Color(0xFFCFB1B4),
+                            foregroundColor: const Color(0xFF2D2123),
                           ),
                         ),
                       ],
@@ -399,7 +430,8 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('À propos'),
-        backgroundColor: Colors.deepPurple.withOpacity(0.7),
+        backgroundColor: const Color(0xFFC9BDC9).withOpacity(0.7),
+        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Container(
@@ -408,12 +440,16 @@ class AboutPage extends StatelessWidget {
             image: AssetImage('assets/cosmic_clock.png'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.35),
+              Colors.black.withOpacity(0.10),
               BlendMode.darken,
             ),
           ),
           gradient: LinearGradient(
-            colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
+            colors: [
+              const Color(0xFFEDE1DE),
+              const Color(0xFFCDD9E6),
+              const Color(0xFFE7D7C2),
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -428,9 +464,9 @@ class AboutPage extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
+                    color: const Color(0xFFF6F0EC).withOpacity(0.18),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.orangeAccent.withOpacity(0.22)),
+                    border: Border.all(color: const Color(0xFFD7B07A).withOpacity(0.38)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -440,7 +476,7 @@ class AboutPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orangeAccent,
+                          color: const Color(0xFFD7B07A),
                         ),
                       ),
                       SizedBox(height: 14),
@@ -474,10 +510,10 @@ class AboutPage extends StatelessWidget {
                       height: 42,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        color: Colors.deepPurple.withOpacity(0.45),
+                        color: const Color(0xFFC9C1D4).withOpacity(0.42),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: Colors.orangeAccent.withOpacity(0.35),
+                          color: const Color(0xFFD9B784).withOpacity(0.45),
                         ),
                       ),
                       child: Center(
@@ -534,9 +570,9 @@ class AboutPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.deepPurple.withOpacity(0.35),
+        color: const Color(0xFFC5CFE0).withOpacity(0.38),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.12)),
+        border: Border.all(color: Colors.white.withOpacity(0.14)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -546,7 +582,7 @@ class AboutPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: Colors.orangeAccent,
+              color: const Color(0xFFB78552),
             ),
           ),
           const SizedBox(height: 3),
