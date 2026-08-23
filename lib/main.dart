@@ -113,6 +113,19 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
     return 'Prochain anniversaire (13 mois) : dans $joursRestants jours';
   }
 
+  String _formatJourSemaine(DateTime date) {
+    return DateFormat('EEEE', 'fr_FR').format(date);
+  }
+
+  String _messageRegularite() {
+    if (_dateNaissance == null) {
+      return 'Choisissez une date pour voir le jour exact de votre anniversaire dans ce calendrier.';
+    }
+
+    final jour = _formatJourSemaine(_dateNaissance!);
+    return 'Dans le calendrier de 13 mois, votre anniversaire tombe toujours un $jour, car chaque mois compte 28 jours.';
+  }
+
   Future<void> _pickDate() async {
   final now = DateTime.now();
   final picked = await showDatePicker(
@@ -279,6 +292,24 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const AboutPage(),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.info_outline),
+                      label: Text('À propos'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
                   ElevatedButton.icon(
                     onPressed: _pickDate,
                     icon: Icon(Icons.calendar_today),
@@ -343,3 +374,192 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
     );
   }
 }
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
+  static const List<String> _months = [
+    'Avril',
+    'Mai',
+    'Juin',
+    'Juillet',
+    'Août',
+    'Septembre',
+    'Octobre',
+    'Novembre',
+    'Décembre',
+    'Janvier',
+    'Février',
+    'Mars',
+    'Mois 13',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('À propos'),
+        backgroundColor: Colors.deepPurple.withOpacity(0.7),
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/cosmic_clock.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.35),
+              BlendMode.darken,
+            ),
+          ),
+          gradient: LinearGradient(
+            colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.orangeAccent.withOpacity(0.22)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Une année plus régulière',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orangeAccent,
+                        ),
+                      ),
+                      SizedBox(height: 14),
+                      Text(
+                        'Le calendrier grégorien que nous utilisons aujourd’hui est le fruit d’une longue histoire, mais il reste irrégulier : certains mois ont 28, 29, 30 ou 31 jours, et l’année ne se divise pas de façon aussi simple qu’un cycle parfait. Le calendrier de 13 mois propose une alternative plus régulière, plus lisible et plus stable.',
+                        style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 18),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    _buildMetricChip('28 jours', 'par mois'),
+                    _buildMetricChip('13 mois', 'par année'),
+                    _buildMetricChip('364 jours', 'sans irrégularité'),
+                    _buildMetricChip('+1 jour', 'intercalaire'),
+                  ],
+                ),
+                SizedBox(height: 22),
+                _buildSectionHeader('Calendrier de 13 mois'),
+                SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _months.map((month) {
+                    return Container(
+                      width: 94,
+                      height: 42,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.withOpacity(0.45),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.orangeAccent.withOpacity(0.35),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          month,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 22),
+                _buildSectionHeader('Pourquoi 12 mois ?'),
+                SizedBox(height: 10),
+                Text(
+                  'Le calendrier grégorien a été construit dans un contexte religieux et historique très fort. Les mois héritent de la tradition romaine, et l’Église a longtemps influencé la structuration du temps liturgique. L’idée de 12 mois s’inscrit dans cette histoire, mais elle n’est pas la seule possible. Dès le XVIIIe siècle, des réformateurs ont proposé des calendriers plus réguliers pour mieux correspondre aux besoins de la vie moderne.',
+                  style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
+                ),
+                SizedBox(height: 14),
+                Text(
+                  'Les idées de réforme du calendrier n’ont pas attendu le XXIe siècle : des projets comme le Georgian Calendar (1745), le calendrier positiviste d’Auguste Comte (1849), puis le World Calendar et l’International Fixed Calendar au XXe siècle, ont tous cherché à créer une année plus logique, plus stable et plus facile à prévoir. Le rythme de 13 mois de 28 jours est l’une des solutions les plus célèbres à cette ambition.',
+                  style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Le point fort du calendrier de 13 mois : il crée un système où chaque mois a la même durée, où l’année est plus uniforme et où la régularité du temps devient plus simple à vivre. C’est une manière élégante de repenser le calendrier sans partir de zéro : en gardant l’idée de cycle, mais en renforçant sa logique.',
+                  style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildMetricChip(String value, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.deepPurple.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.12)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Colors.orangeAccent,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
