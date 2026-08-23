@@ -11,10 +11,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:age_13_mois/main.dart';
 
 void main() {
-  testWidgets('top banner title is hidden', (WidgetTester tester) async {
+  testWidgets('about button opens the dedicated about page', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
-    expect(find.byType(AppBar), findsNothing);
-    expect(find.text('Âge en calendrier de 13 mois'), findsNothing);
+    expect(find.text('À propos'), findsOneWidget);
+    await tester.tap(find.text('À propos'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Calendrier de 13 mois'), findsOneWidget);
+    expect(find.text('Une année plus régulière'), findsOneWidget);
   });
 }
