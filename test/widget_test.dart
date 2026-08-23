@@ -11,14 +11,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:age_13_mois/main.dart';
 
 void main() {
-  test('planetary ages are rounded to the nearest year', () {
+  test('planetary ages are displayed as years, months and days without Earth', () {
     final result = calculerAgeSurPlanetes(
       DateTime(2001, 1, 1),
       DateTime(2023, 12, 31),
     );
 
-    final terre = result.firstWhere((planete) => planete['nom'] == 'Terre');
-    expect(terre['age'], '~23');
+    expect(result.any((planete) => planete['nom'] == 'Terre'), isFalse);
+
+    final mars = result.firstWhere((planete) => planete['nom'] == 'Mars');
+    expect(mars['age'], contains('ans'));
+    expect(mars['age'], contains('mois'));
+    expect(mars['age'], contains('jours'));
   });
 
   testWidgets('about button opens the dedicated about page', (WidgetTester tester) async {

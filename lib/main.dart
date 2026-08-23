@@ -11,11 +11,10 @@ List<Map<String, String>> calculerAgeSurPlanetes(
   DateTime naissance,
   DateTime maintenant,
 ) {
-  final joursVecus = maintenant.difference(naissance).inDays.toDouble();
+  final joursVecus = maintenant.difference(naissance).inDays;
   const planetes = [
     {'nom': 'Mercure', 'periode': 87.97},
     {'nom': 'Vénus', 'periode': 224.70},
-    {'nom': 'Terre', 'periode': 365.25},
     {'nom': 'Mars', 'periode': 686.98},
     {'nom': 'Jupiter', 'periode': 4332.59},
     {'nom': 'Saturne', 'periode': 10759.22},
@@ -25,10 +24,26 @@ List<Map<String, String>> calculerAgeSurPlanetes(
 
   return planetes.map((planete) {
     final periode = (planete['periode'] as num).toDouble();
-    final age = joursVecus / periode;
+    final agePlanetaireEnAnnees = joursVecus / periode;
+
+    int ans = agePlanetaireEnAnnees.floor();
+    double resteApresAns = agePlanetaireEnAnnees - ans;
+    int mois = (resteApresAns * 12).floor();
+    double resteApresMois = resteApresAns * 12 - mois;
+    int jours = (resteApresMois * 28).round();
+
+    if (jours == 28) {
+      jours = 0;
+      mois += 1;
+    }
+    if (mois == 12) {
+      mois = 0;
+      ans += 1;
+    }
+
     return {
       'nom': planete['nom'] as String,
-      'age': '~${age.round()}',
+      'age': '$ans ans, $mois mois, $jours jours',
     };
   }).toList();
 }
@@ -347,7 +362,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                     ),
                   ),
                   Text(
-                    '${planete['age']} ans',
+                    planete['age']!,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Color(0xFF2D2A2A),
@@ -519,6 +534,7 @@ class AboutPage extends StatelessWidget {
     'Avril',
     'Mai',
     'Juin',
+    'Sol',
     'Juillet',
     'Août',
     'Septembre',
@@ -528,7 +544,6 @@ class AboutPage extends StatelessWidget {
     'Janvier',
     'Février',
     'Mars',
-    'Mois 13',
   ];
 
   @override
