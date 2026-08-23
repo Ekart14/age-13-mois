@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:screenshot/screenshot.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,17 +13,30 @@ void main() async {
   runApp(MyApp());
 }
 
+
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Âge 13 Mois',
       debugShowCheckedModeBanner: false,
+      locale: const Locale('fr', 'FR'),
+      supportedLocales: const [
+        Locale('fr', 'FR'),
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         scaffoldBackgroundColor: Color(0xFF1A1A2E),
         textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
+          Theme.of(context).textTheme.apply(bodyColor: Colors.white),
         ),
       ),
       home: AgeCalculatorPage(),
@@ -28,6 +45,8 @@ class MyApp extends StatelessWidget {
 }
 
 class AgeCalculatorPage extends StatefulWidget {
+  const AgeCalculatorPage({super.key});
+
   @override
   _AgeCalculatorPageState createState() => _AgeCalculatorPageState();
 }
@@ -38,6 +57,10 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
   String _comparaison = '';
   String _joursVecus = '';
   String _prochainAnniversaire = '';
+  String _textePartage = '';
+
+  final _screenshotController = ScreenshotController();
+  final GlobalKey _carteKey = GlobalKey();
 
   String _formatDate(DateTime date) {
     final formatter = DateFormat('EEEE d MMMM y', 'fr_FR');
@@ -49,8 +72,10 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
     const moisParAn = 13;
     final joursParAn = joursParMois * moisParAn;
 
-    final dateNaissance = DateTime(naissance.year, naissance.month, naissance.day);
-    final dateMaintenant = DateTime(maintenant.year, maintenant.month, maintenant.day);
+    final dateNaissance =
+        DateTime(naissance.year, naissance.month, naissance.day);
+    final dateMaintenant =
+        DateTime(maintenant.year, maintenant.month, maintenant.day);
     final joursVecus = dateMaintenant.difference(dateNaissance).inDays;
 
     final ans = joursVecus ~/ joursParAn;
@@ -80,7 +105,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
 
   String _calculerProchainAnniversaire(DateTime naissance) {
     final now = DateTime.now();
-    var dateAnniv = DateTime(now.year, naissance.month, naissance.day);
+    DateTime dateAnniv = DateTime(now.year, naissance.month, naissance.day);
     if (dateAnniv.isBefore(now)) {
       dateAnniv = DateTime(now.year + 1, naissance.month, naissance.day);
     }
@@ -89,14 +114,15 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
   }
 
   Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(1994, 6, 14),
-      firstDate: DateTime(1900),
-      lastDate: now,
-    );
-    if (picked != null) {
+  final now = DateTime.now();
+  final picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime(1994, 6, 14),
+    firstDate: DateTime(1900),
+    lastDate: now,
+  );
+  if (picked != null) {
+    try {
       setState(() {
         _dateNaissance = picked;
 
@@ -104,47 +130,153 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
         final ageGreg = _calculerAgeGregorien(picked, now);
 
         _resultat = '${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
-        _comparaison = 'Âge normal : ${ageGreg[0]} ans, ${ageGreg[1]} mois, ${ageGreg[2]} jours\n'
-            'Âge calendrier 13 mois : ${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
+        _comparaison =
+            'Âge normal : ${ageGreg[0]} ans, ${ageGreg[1]} mois, ${ageGreg[2]} jours\n'
+            'Âge 13 mois : ${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
         _joursVecus = 'Total jours vécus : ${age13[3]} jours';
         _prochainAnniversaire = _calculerProchainAnniversaire(picked);
+
+        _textePartage = '🎉 Mon âge en calendrier de 13 mois :\n'
+            'Date de naissance : ${_formatDate(picked)}\n'
+            'Résultat : $_resultat\n'
+            '$_comparaison\n'
+            '$_joursVecus\n'
+            '$_prochainAnniversaire';
       });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur : $e')),
+      );
     }
+  }
+}
+
+
+  Future<void> _copierTexte() async {
+    await Clipboard.setData(ClipboardData(text: _textePartage));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Texte copié dans le presse-papier')),
+    );
+  }
+
+  Future<void> _partagerTexte() async {
+    if (_textePartage.isEmpty) return;
+    await Share.share(_textePartage);
+  }
+
+  Future<void> _partagerImage() async {
+    try {
+      final imageBytes = await _screenshotController.captureFromWidget(
+        _buildResultCard(),
+      );
+      if (imageBytes == null) return;
+
+      final xfile = XFile.fromData(
+        imageBytes,
+        name: 'age_13_mois.png',
+        mimeType: 'image/png',
+      );
+
+      await Share.shareXFiles(
+        [xfile],
+        text: 'Mon âge en calendrier de 13 mois !',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du partage : $e')),
+      );
+    }
+  }
+
+  Widget _buildResultCard() {
+    return Container(
+      key: _carteKey,
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.deepPurple.withOpacity(0.55),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.orangeAccent.withOpacity(0.4)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black45,
+            blurRadius: 15,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            child: Text(
+              _resultat,
+              key: ValueKey(_resultat),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.orangeAccent,
+              ),
+            ),
+          ),
+          SizedBox(height: 16),
+          Text(
+            _comparaison,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          ),
+          SizedBox(height: 8),
+          Text(
+            _joursVecus,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          ),
+          SizedBox(height: 8),
+          Text(
+            _prochainAnniversaire,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.white),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text('Âge en calendrier de 13 mois'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Container(
-        // Image de fond cosmique
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/cosmic_clock.png'),
             fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.35),
+              BlendMode.darken,
+            ),
+          ),
+          gradient: LinearGradient(
+            colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
-        child: Container(
-          // Voile sombre pour améliorer la lisibilité
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.7),
-          ),
-          child: Center(
+        child: SafeArea(
+          top: false,
+          child: Align(
+            alignment: Alignment.topCenter,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 18.0, 16.0, 16.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 60),
                   Text(
                     'Entrez votre date de naissance :',
                     style: TextStyle(fontSize: 18, color: Colors.white),
-                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 16),
                   ElevatedButton.icon(
@@ -154,68 +286,52 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.orangeAccent,
                       foregroundColor: Colors.black,
-                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 16),
                   if (_dateNaissance != null) ...[
                     Text(
                       'Date choisie : ${_formatDate(_dateNaissance!)}',
                       style: TextStyle(fontSize: 16, color: Colors.white70),
-                      textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 24),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: Colors.orangeAccent.withOpacity(0.4),
-                          width: 1,
+                    _buildResultCard(),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: _copierTexte,
+                          icon: Icon(Icons.copy),
+                          label: Text('Copier'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.greenAccent,
+                            foregroundColor: Colors.black,
+                          ),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.deepPurple.withOpacity(0.4),
-                            blurRadius: 20,
-                            offset: Offset(0, 6),
+                        ElevatedButton.icon(
+                          onPressed: _partagerTexte,
+                          icon: Icon(Icons.share),
+                          label: Text('Texte'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            foregroundColor: Colors.black,
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          AnimatedSwitcher(
-                            duration: Duration(milliseconds: 500),
-                            child: Text(
-                              _resultat,
-                              key: ValueKey(_resultat),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.orangeAccent,
-                              ),
-                            ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: _partagerImage,
+                          icon: Icon(Icons.image),
+                          label: Text('Image'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pinkAccent,
+                            foregroundColor: Colors.black,
                           ),
-                          SizedBox(height: 16),
-                          Text(
-                            _comparaison,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 15, color: Colors.white),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            _joursVecus,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 15, color: Colors.white),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ],
