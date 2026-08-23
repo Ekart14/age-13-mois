@@ -315,26 +315,52 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Entrez votre date de naissance :',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0E3D4).withOpacity(0.84),
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: const Color(0xFFB98651).withOpacity(0.9),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text(
+                            'Entrez votre date de naissance :',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: const Color(0xFF2D251F),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const AboutPage(),
-                          ),
-                        );
-                      },
-                      icon: Icon(Icons.info_outline),
-                      label: Text('À propos'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AboutPage(),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.info_outline),
+                    label: Text('À propos'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xE6C98B5B),
+                      foregroundColor: const Color(0xFF2B1F1B),
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
+                      elevation: 0,
                     ),
                   ),
                   SizedBox(height: 16),
@@ -430,8 +456,8 @@ class AboutPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('À propos'),
-        backgroundColor: const Color(0xFFC9BDC9).withOpacity(0.7),
-        foregroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF1E2D6).withOpacity(0.86),
+        foregroundColor: const Color(0xFF332923),
         elevation: 0,
       ),
       body: Container(
@@ -464,9 +490,16 @@ class AboutPage extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF6F0EC).withOpacity(0.18),
+                    color: const Color(0xFFF3EBD9).withOpacity(0.82),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFD7B07A).withOpacity(0.38)),
+                    border: Border.all(color: const Color(0xFFD7B07A), width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -476,13 +509,17 @@ class AboutPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFFD7B07A),
+                          color: const Color(0xFF3C2D29),
                         ),
                       ),
                       SizedBox(height: 14),
                       Text(
                         'Le calendrier grégorien que nous utilisons aujourd’hui est le fruit d’une longue histoire, mais il reste irrégulier : certains mois ont 28, 29, 30 ou 31 jours, et l’année ne se divise pas de façon aussi simple qu’un cycle parfait. Le calendrier de 13 mois propose une alternative plus régulière, plus lisible et plus stable.',
-                        style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: const Color(0xFF2F2A28),
+                          height: 1.6,
+                        ),
                       ),
                     ],
                   ),
@@ -510,10 +547,10 @@ class AboutPage extends StatelessWidget {
                       height: 42,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFC9C1D4).withOpacity(0.42),
+                        color: const Color(0xFFF3EAD9).withOpacity(0.82),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: const Color(0xFFD9B784).withOpacity(0.45),
+                          color: const Color(0xFFD9B784).withOpacity(0.8),
                         ),
                       ),
                       child: Center(
@@ -523,7 +560,7 @@ class AboutPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: const Color(0xFF312923),
                           ),
                         ),
                       ),
@@ -531,21 +568,54 @@ class AboutPage extends StatelessWidget {
                   }).toList(),
                 ),
                 SizedBox(height: 22),
-                _buildSectionHeader('Pourquoi 12 mois ?'),
-                SizedBox(height: 10),
-                Text(
-                  'Le calendrier grégorien a été construit dans un contexte religieux et historique très fort. Les mois héritent de la tradition romaine, et l’Église a longtemps influencé la structuration du temps liturgique. L’idée de 12 mois s’inscrit dans cette histoire, mais elle n’est pas la seule possible. Dès le XVIIIe siècle, des réformateurs ont proposé des calendriers plus réguliers pour mieux correspondre aux besoins de la vie moderne.',
-                  style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
-                ),
-                SizedBox(height: 14),
-                Text(
-                  'Les idées de réforme du calendrier n’ont pas attendu le XXIe siècle : des projets comme le Georgian Calendar (1745), le calendrier positiviste d’Auguste Comte (1849), puis le World Calendar et l’International Fixed Calendar au XXe siècle, ont tous cherché à créer une année plus logique, plus stable et plus facile à prévoir. Le rythme de 13 mois de 28 jours est l’une des solutions les plus célèbres à cette ambition.',
-                  style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Le point fort du calendrier de 13 mois : il crée un système où chaque mois a la même durée, où l’année est plus uniforme et où la régularité du temps devient plus simple à vivre. C’est une manière élégante de repenser le calendrier sans partir de zéro : en gardant l’idée de cycle, mais en renforçant sa logique.',
-                  style: TextStyle(fontSize: 16, color: Colors.white70, height: 1.6),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3EBD9).withOpacity(0.82),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFD7B07A), width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('Pourquoi 12 mois ?'),
+                      SizedBox(height: 12),
+                      Text(
+                        'Le calendrier grégorien a été construit dans un contexte religieux et historique très fort. Les mois héritent de la tradition romaine, et l’Église a longtemps influencé la structuration du temps liturgique. L’idée de 12 mois s’inscrit dans cette histoire, mais elle n’est pas la seule possible. Dès le XVIIIe siècle, des réformateurs ont proposé des calendriers plus réguliers pour mieux correspondre aux besoins de la vie moderne.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: const Color(0xFF2E2928),
+                          height: 1.6,
+                        ),
+                      ),
+                      SizedBox(height: 14),
+                      Text(
+                        'Les idées de réforme du calendrier n’ont pas attendu le XXIe siècle : des projets comme le Georgian Calendar (1745), le calendrier positiviste d’Auguste Comte (1849), puis le World Calendar et l’International Fixed Calendar au XXe siècle, ont tous cherché à créer une année plus logique, plus stable et plus facile à prévoir. Le rythme de 13 mois de 28 jours est l’une des solutions les plus célèbres à cette ambition.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: const Color(0xFF2E2928),
+                          height: 1.6,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Le point fort du calendrier de 13 mois : il crée un système où chaque mois a la même durée, où l’année est plus uniforme et où la régularité du temps devient plus simple à vivre. C’est une manière élégante de repenser le calendrier sans partir de zéro : en gardant l’idée de cycle, mais en renforçant sa logique.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: const Color(0xFF2E2928),
+                          height: 1.6,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -561,7 +631,7 @@ class AboutPage extends StatelessWidget {
       style: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.w700,
-        color: Colors.white,
+        color: const Color(0xFF2E2724),
       ),
     );
   }
@@ -570,9 +640,9 @@ class AboutPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFC5CFE0).withOpacity(0.38),
+        color: const Color(0xFFF0E6DD).withOpacity(0.78),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.14)),
+        border: Border.all(color: const Color(0xFFB9B5B2).withOpacity(0.45)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -582,7 +652,7 @@ class AboutPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFFB78552),
+              color: const Color(0xFF3E2E27),
             ),
           ),
           const SizedBox(height: 3),
@@ -590,7 +660,7 @@ class AboutPage extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 10,
-              color: Colors.white70,
+              color: const Color(0xFF4D413E),
             ),
           ),
         ],
