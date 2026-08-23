@@ -148,8 +148,8 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
 
         _resultat = '${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
         _comparaison =
-            'Âge normal : ${ageGreg[0]} ans, ${ageGreg[1]} mois, ${ageGreg[2]} jours\n'
-            'Âge 13 mois : ${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
+            'Âge si 12 mois : ${ageGreg[0]} ans, ${ageGreg[1]} mois, ${ageGreg[2]} jours\n'
+            'Âge si 13 mois : ${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
         _joursVecus = 'Total jours vécus : ${age13[3]} jours';
         _prochainAnniversaire = _calculerProchainAnniversaire(picked);
 
@@ -157,8 +157,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
             'Date de naissance : ${_formatDate(picked)}\n'
             'Résultat : $_resultat\n'
             '$_comparaison\n'
-            '$_joursVecus\n'
-            '$_prochainAnniversaire';
+            '$_joursVecus';
       });
     } catch (e) {
       if (!mounted) return;
@@ -261,16 +260,6 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
           SizedBox(height: 8),
           Text(
             _joursVecus,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: const Color(0xFF2D2A2A),
-              height: 1.5,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            _prochainAnniversaire,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
@@ -538,34 +527,61 @@ class AboutPage extends StatelessWidget {
                 SizedBox(height: 22),
                 _buildSectionHeader('Calendrier de 13 mois'),
                 SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _months.map((month) {
-                    return Container(
-                      width: 94,
-                      height: 42,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3EAD9).withOpacity(0.82),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: const Color(0xFFD9B784).withOpacity(0.8),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          month,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF312923),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: _months.map((month) {
+                      return Container(
+                        width: 94,
+                        height: 42,
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3EAD9).withOpacity(0.82),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: const Color(0xFFD9B784).withOpacity(0.8),
                           ),
                         ),
+                        child: Center(
+                          child: Text(
+                            month,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF312923),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                SizedBox(height: 22),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3EBD9).withOpacity(0.82),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFD7B07A), width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
                       ),
-                    );
-                  }).toList(),
+                    ],
+                  ),
+                  child: Text(
+                    'Tu ne trouves pas qu’il serait plus logique que le printemps marque le début de l’année plutôt que l’hiver ?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: const Color(0xFF2E2928),
+                      height: 1.6,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 22),
                 Container(
