@@ -482,39 +482,27 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                     _buildResultCard(),
                     const SizedBox(height: 20),
                     _buildPlanetAgeSection(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: _copierTexte,
-                          icon: Icon(Icons.copy),
-                          label: Text('Copier'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFB9CBB7),
-                            foregroundColor: const Color(0xFF24312C),
-                            elevation: 0,
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          if (_textePartage.isEmpty) return;
+
+                          await Share.share(
+                            _textePartage,
+                          );
+                        },
+                        icon: Icon(Icons.share),
+                        label: Text('Partager'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFB7C9D7),
+                          foregroundColor: const Color(0xFF1D2C36),
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        ElevatedButton.icon(
-                          onPressed: _partagerTexte,
-                          icon: Icon(Icons.share),
-                          label: Text('Texte'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFB7C9D7),
-                            foregroundColor: const Color(0xFF1D2C36),
-                            elevation: 0,
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: _partagerImage,
-                          icon: Icon(Icons.image),
-                          label: Text('Image'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFCFB1B4),
-                            foregroundColor: const Color(0xFF2D2123),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ],
