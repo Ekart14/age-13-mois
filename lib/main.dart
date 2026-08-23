@@ -7,6 +7,32 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:screenshot/screenshot.dart';
 
+List<Map<String, String>> calculerAgeSurPlanetes(
+  DateTime naissance,
+  DateTime maintenant,
+) {
+  final joursVecus = maintenant.difference(naissance).inDays.toDouble();
+  const planetes = [
+    {'nom': 'Mercure', 'periode': 87.97},
+    {'nom': 'Vénus', 'periode': 224.70},
+    {'nom': 'Terre', 'periode': 365.25},
+    {'nom': 'Mars', 'periode': 686.98},
+    {'nom': 'Jupiter', 'periode': 4332.59},
+    {'nom': 'Saturne', 'periode': 10759.22},
+    {'nom': 'Uranus', 'periode': 30688.5},
+    {'nom': 'Neptune', 'periode': 60182.0},
+  ];
+
+  return planetes.map((planete) {
+    final periode = (planete['periode'] as num).toDouble();
+    final age = joursVecus / periode;
+    return {
+      'nom': planete['nom'] as String,
+      'age': '~${age.round()}',
+    };
+  }).toList();
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('fr_FR', null);
@@ -62,6 +88,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
   String _joursVecus = '';
   String _prochainAnniversaire = '';
   String _textePartage = '';
+  List<Map<String, String>> _agesPlanetes = [];
 
   final _screenshotController = ScreenshotController();
   final GlobalKey _carteKey = GlobalKey();
@@ -105,6 +132,13 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
     }
 
     return [ans, mois, jours];
+  }
+
+  List<Map<String, String>> _calculerAgeSurPlanetes(
+    DateTime naissance,
+    DateTime maintenant,
+  ) {
+    return calculerAgeSurPlanetes(naissance, maintenant);
   }
 
   String _calculerProchainAnniversaire(DateTime naissance) {
@@ -152,6 +186,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
             'Âge si 13 mois : ${age13[0]} ans, ${age13[1]} mois, ${age13[2]} jours';
         _joursVecus = 'Total jours vécus : ${age13[3]} jours';
         _prochainAnniversaire = _calculerProchainAnniversaire(picked);
+        _agesPlanetes = _calculerAgeSurPlanetes(picked, now);
 
         _textePartage = '🎉 Mon âge en calendrier de 13 mois :\n'
             'Date de naissance : ${_formatDate(picked)}\n'
@@ -227,7 +262,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
       child: Column(
         children: [
           AnimatedSwitcher(
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             child: Text(
               _resultat,
               key: ValueKey(_resultat),
@@ -247,7 +282,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
               ),
             ),
           ),
-          SizedBox(height: 18),
+          const SizedBox(height: 18),
           Text(
             _comparaison,
             textAlign: TextAlign.center,
@@ -257,7 +292,7 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
               height: 1.5,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             _joursVecus,
             textAlign: TextAlign.center,
@@ -267,6 +302,61 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
               height: 1.5,
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlanetAgeSection() {
+    if (_dateNaissance == null || _agesPlanetes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3E8DF).withOpacity(0.9),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFB98651), width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Âge sur d\'autres planètes',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF2F2420),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ..._agesPlanetes.map((planete) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    planete['nom']!,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF2D2A2A),
+                    ),
+                  ),
+                  Text(
+                    '${planete['age']} ans',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF2D2A2A),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -373,9 +463,10 @@ class _AgeCalculatorPageState extends State<AgeCalculatorPage> {
                       'Date choisie : ${_formatDate(_dateNaissance!)}',
                       style: TextStyle(fontSize: 16, color: Colors.white70),
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     _buildResultCard(),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
+                    _buildPlanetAgeSection(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

@@ -11,6 +11,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:age_13_mois/main.dart';
 
 void main() {
+  test('planetary ages are rounded to the nearest year', () {
+    final result = calculerAgeSurPlanetes(
+      DateTime(2001, 1, 1),
+      DateTime(2023, 12, 31),
+    );
+
+    final terre = result.firstWhere((planete) => planete['nom'] == 'Terre');
+    expect(terre['age'], '~23');
+  });
+
   testWidgets('about button opens the dedicated about page', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
